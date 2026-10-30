@@ -8,7 +8,7 @@ import UIKit
 ///  - `denied`  用户拒绝了相册权限
 ///  - `failed`  其它失败（原因已本地化）
 enum SaveOutcome {
-    case saved(where: String)
+    case saved(location: String)
     case denied
     case failed(String)
 }
@@ -85,7 +85,7 @@ enum GallerySaver {
                     }
                 }
             }
-            return .saved(where: "相册")
+            return .saved(location: "相册")
         } catch {
             return .failed(error.localizedDescription)
         }
@@ -108,7 +108,7 @@ enum GallerySaver {
                 target = folder.appendingPathComponent("\(base)_\(Int(Date().timeIntervalSince1970)).\(ext)")
             }
             try FileManager.default.moveItem(at: file.fileURL, to: target)
-            return .saved(where: "文件 App/GrabBox")
+            return .saved(location: "文件 App/GrabBox")
         } catch {
             return .failed(error.localizedDescription)
         }

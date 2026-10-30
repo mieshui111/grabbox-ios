@@ -20,8 +20,12 @@ final class DownloadCoordinator: ObservableObject {
     @Published private(set) var detail: String = ""
     @Published private(set) var busy = false
 
-    /// 自建后端地址（YouTube / Instagram 需要）。留空时这两个平台会给出明确提示
-    @AppStorage("backendBase") var backendBase: String = ""
+    /// 自建后端地址（YouTube / Instagram 需要）。留空时这两个平台会给出明确提示。
+    /// 用 UserDefaults 直读而不是 @AppStorage —— 后者是给 View 用的 DynamicProperty，
+    /// 放在 ObservableObject 里不会触发刷新，还多一层编译风险。
+    private var backendBase: String {
+        UserDefaults.standard.string(forKey: "backendBase") ?? ""
+    }
 
     private let watcher = ClipboardWatcher()
 

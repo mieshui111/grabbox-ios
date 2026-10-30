@@ -100,8 +100,10 @@ enum MediaDownloader {
         let referer = refererFor(item.url)
         let probe = try await probe(item, referer: referer)
 
+        // 加随机后缀：图集连续下载可能落在同一毫秒，纯时间戳会互相覆盖
         let stamp = Int(Date().timeIntervalSince1970 * 1000)
-        let dest = workDir.appendingPathComponent("grab_\(stamp).part")
+        let unique = UUID().uuidString.prefix(8)
+        let dest = workDir.appendingPathComponent("grab_\(stamp)_\(unique).part")
         try? FileManager.default.removeItem(at: dest)
         guard FileManager.default.createFile(atPath: dest.path, contents: nil) else {
             throw DownloadError.disk("无法创建临时文件")
