@@ -1,0 +1,74 @@
+name: ios-build
+
+# 在 GitHub 的免费 macOS 机器上编译，产出「未签名 .ipa」
+# 未签名 ipa 拿到 Windows 上，用 Sideloadly + 自己的 Apple ID 签名装进 iPhone。
+# 触发方式：push 到任意分支，或在 Actions 页面手动 Run workflow。
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build unsigned ipa
+    runs-on: macos-14
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app 2>/dev/null || true
+          xcodebuild -version
+          swift --version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Compile (Release, no signing)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project GrabBox.xcodeproj \
+            -scheme GrabBox \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/GrabBox.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            archive 2>&1 | tee build.log | tail -60
+
+      - name: Package unsigned ipa
+        run: |
+          set -euo pipefail
+          APP="build/GrabBox.xcarchive/Products/Applications/GrabBox.app"
+          test -d "$APP" || { echo "::error::archive 里没有 GrabBox.app，编译阶段就失败了"; exit 1; }
+          rm -rf build/Payload
+          mkdir -p build/Payload
+          cp -R "$APP" build/Payload/
+          cd build
+          zip -qry GrabBox-unsigned.ipa Payload
+          ls -lh GrabBox-unsigned.ipa
+
+      - name: Upload ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: GrabBox-unsigned-ipa
+          path: build/GrabBox-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
+
+      # 编译失败时最有用：把完整日志带出来，贴给我就能定位
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: warn
+          retention-days: 14

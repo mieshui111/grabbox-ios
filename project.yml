@@ -1,0 +1,70 @@
+name: GrabBox
+
+options:
+  bundleIdPrefix: com.ms
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: "NO"
+    SWIFT_STRICT_CONCURRENCY: minimal
+    ENABLE_BITCODE: "NO"
+
+targets:
+  GrabBox:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: GrabBox
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ms.grabbox
+        PRODUCT_NAME: GrabBox
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        INFOPLIST_KEY_CFBundleDisplayName: GrabBox
+        GENERATE_INFOPLIST_FILE: "NO"
+    info:
+      path: GrabBox/Info.plist
+      properties:
+        CFBundleDisplayName: GrabBox
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIUserInterfaceStyle: Dark
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        # 保存视频 / 图片到相册
+        NSPhotoLibraryAddUsageDescription: 需要把下载的视频和图片保存到你的相册。
+        # 部分平台 CDN 直链是 http（抖音 / 微博偶发），不放行会直接失败。
+        # 真上 App Store 时这一条会被要求逐域名说明，届时改成 NSExceptionDomains 白名单。
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        # 快捷指令入口：grabbox://grab?url=...
+        CFBundleURLTypes:
+          - CFBundleURLName: com.ms.grabbox
+            CFBundleURLSchemes:
+              - grabbox
+
+schemes:
+  GrabBox:
+    build:
+      targets:
+        GrabBox: all
+    run:
+      config: Debug
+    archive:
+      config: Release

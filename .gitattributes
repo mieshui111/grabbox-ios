@@ -1,0 +1,16 @@
+# 强制文本文件用 LF —— 否则 Windows 上 CRLF 化后，Mac 侧脚本会报 bad interpreter
+* text=auto eol=lf
+
+*.sh        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.swift     text eol=lf
+*.mjs       text eol=lf
+*.js        text eol=lf
+*.md        text eol=lf
+*.py        text eol=lf
+*.json      text eol=lf
+*.plist     text eol=lf
+Dockerfile  text eol=lf
+
+*.png       binary

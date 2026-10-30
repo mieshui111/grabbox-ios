@@ -1,0 +1,17 @@
+# xcodegen 生成，不入库（CI 里会自动生成）
+GrabBox.xcodeproj/
+GrabBox.xcworkspace/
+
+# 构建产物
+build/
+DerivedData/
+*.ipa
+*.xcarchive
+*.dSYM
+build.log
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+__pycache__/
+node_modules/
