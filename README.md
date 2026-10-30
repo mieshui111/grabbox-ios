@@ -2,6 +2,8 @@
 
 Android 版 GrabBox 的 iOS 移植。深色克制 UI、剪贴板自动识别、多平台无水印下载。
 
+> **只想装到 iPhone 上？** 直接看 [INSTALL.md](INSTALL.md) —— 从 GitHub 云编译到 Sideloadly 签名安装的完整步骤。
+
 ## 与 Android 版的关键差异
 
 | | Android | iOS |
